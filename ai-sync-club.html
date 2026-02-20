@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 싱크 클럽</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-deep: #060a1a;
+      --bg-navy: #0a0e27;
+      --bg-card: #0f1433;
+      --line-cyan: #00d4ff;
+      --line-purple: #7b61ff;
+      --text-primary: #e8eaf6;
+      --text-secondary: #8b90b0;
+      --gradient-line: linear-gradient(135deg, #00d4ff, #7b61ff);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Pretendard', -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(6, 10, 26, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 212, 255, 0.08);
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: var(--gradient-line);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.3s;
+    }
+
+    .nav-link:hover { color: var(--line-cyan); }
+
+    /* ── Section common ── */
+    section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0, 212, 255, 0.06) 0%, transparent 70%);
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--line-cyan);
+      margin-bottom: 28px;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 .gradient {
+      background: var(--gradient-line);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin-bottom: 40px;
+    }
+
+    .btn-outline {
+      display: inline-block;
+      padding: 14px 36px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--text-primary);
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  var(--gradient-line) border-box;
+      transition: all 0.3s;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-outline:hover {
+      box-shadow: 0 0 24px rgba(0, 212, 255, 0.15), 0 0 48px rgba(123, 97, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    /* ── About ── */
+    .about {
+      padding-top: 120px;
+      padding-bottom: 100px;
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--line-cyan);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      max-width: 540px;
+      margin-bottom: 56px;
+      font-size: 1rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      padding: 32px 28px;
+      border: 1px solid rgba(0, 212, 255, 0.1);
+      border-radius: 14px;
+      background: var(--bg-card);
+      transition: all 0.35s;
+    }
+
+    .card:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.05);
+      transform: translateY(-4px);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(123, 97, 255, 0.3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* ── Join ── */
+    .join {
+      padding-top: 80px;
+      padding-bottom: 140px;
+    }
+
+    .join-box {
+      border: 1px solid rgba(0, 212, 255, 0.12);
+      border-radius: 18px;
+      padding: 56px 48px;
+      background: var(--bg-card);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .join-box::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 20%;
+      right: 20%;
+      height: 1px;
+      background: var(--gradient-line);
+    }
+
+    .join-box h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .join-box > p {
+      color: var(--text-secondary);
+      margin-bottom: 36px;
+      font-size: 0.95rem;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto 16px;
+    }
+
+    .form-input {
+      flex: 1;
+      padding: 13px 18px;
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      border-radius: 8px;
+      background: rgba(6, 10, 26, 0.6);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .form-input::placeholder { color: var(--text-secondary); }
+
+    .form-input:focus {
+      border-color: var(--line-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.08);
+    }
+
+    .btn-submit {
+      padding: 13px 32px;
+      border: none;
+      border-radius: 8px;
+      background: var(--gradient-line);
+      color: #060a1a;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+      opacity: 0.9;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
+    }
+
+    .form-note {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid rgba(0, 212, 255, 0.06);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      nav { padding: 16px 20px; }
+      .cards { grid-template-columns: 1fr; gap: 14px; }
+      .join-box { padding: 40px 24px; }
+      .form-row { flex-direction: column; }
+      .btn-submit { width: 100%; }
+    }
+
+    /* ── Animations ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">AI 싱크 클럽</div>
+    <div style="display:flex;gap:24px;">
+      <a href="#about" class="nav-link">소개</a>
+      <a href="#join" class="nav-link">가입</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">AI Study Community</div>
+    <h1>함께 배우고,<br>함께 성장하는<br><span class="gradient">AI 스터디</span></h1>
+    <p>AI 싱크 클럽은 인공지능 기술을 함께 학습하고 토론하며 실전 프로젝트로 성장하는 커뮤니티입니다.</p>
+    <a href="#join" class="btn-outline">참여하기 →</a>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <div class="section-label fade-up">What We Do</div>
+    <h2 class="section-title fade-up">우리가 하는 것들</h2>
+    <p class="section-desc fade-up">매주 최신 AI 트렌드를 함께 공부하고, 깊이 있는 토론을 나누며, 실전 프로젝트를 통해 성장합니다.</p>
+
+    <div class="cards">
+      <div class="card fade-up">
+        <div class="card-icon">📖</div>
+        <h3>함께 학습</h3>
+        <p>논문 리뷰, 온라인 강의, 최신 기술 트렌드를 함께 공부하고 정리합니다.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">💬</div>
+        <h3>깊은 토론</h3>
+        <p>매주 정기 모임에서 AI 기술과 응용에 대해 자유롭게 의견을 나눕니다.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">🚀</div>
+        <h3>실전 프로젝트</h3>
+        <p>배운 것을 실제 프로젝트에 적용하며 포트폴리오를 함께 만들어갑니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join -->
+  <section class="join" id="join">
+    <div class="join-box fade-up">
+      <h2>지금 합류하세요</h2>
+      <p>AI에 관심 있는 누구나 환영합니다. 함께 성장할 동료를 기다리고 있어요.</p>
+      <div class="form-row">
+        <input type="text" class="form-input" placeholder="이름" id="name">
+        <input type="email" class="form-input" placeholder="이메일" id="email">
+        <button class="btn-submit" id="submitBtn">가입</button>
+      </div>
+      <div class="form-note">가입 후 안내 메일을 보내드립니다.</div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 AI 싱크 클럽. All rights reserved.
+  </footer>
+
+  <script>
+    // Scroll fade-in
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Form submit
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!name || !email) {
+        alert('이름과 이메일을 모두 입력해주세요.');
+        return;
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert('올바른 이메일 형식을 입력해주세요.');
+        return;
+      }
+
+      alert(`${name}님, 가입 신청이 완료되었습니다! 🎉`);
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+    });
+  </script>
+
+</body>
+</html>
