@@ -15,6 +15,7 @@
             justify-content: center;
             background: linear-gradient(145deg, #0c1a14, #081210, #0e1a12);
             font-family: 'Segoe UI', -apple-system, sans-serif;
+            font-size: 15px;
             perspective: 1000px;
             transition: background 0.8s ease;
         }
@@ -27,7 +28,7 @@
         .timer-card {
             width: 380px;
             border-radius: 28px;
-            background: linear-gradient(145deg, #1c2e24, #162820);
+            background: linear-gradient(145deg, #214033, #1c352a);
             box-shadow:
                 14px 14px 35px rgba(0, 0, 0, 0.6),
                 -8px -8px 24px rgba(30, 70, 50, 0.08),
@@ -43,7 +44,7 @@
         }
 
         body.break-mode .timer-card {
-            background: linear-gradient(145deg, #2a2418, #241e14);
+            background: linear-gradient(145deg, #35301f, #2e281b);
             box-shadow:
                 14px 14px 35px rgba(0, 0, 0, 0.6),
                 -8px -8px 24px rgba(80, 60, 30, 0.08),
@@ -387,9 +388,344 @@
         .timer-card.running .btn-primary {
             animation: pulse-glow 2s ease-in-out infinite;
         }
+
+        /* ── App Container ── */
+        .app-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 32px;
+        }
+
+        /* ── TODO Card ── */
+        .todo-card {
+            width: 340px;
+            border-radius: 28px;
+            background: linear-gradient(145deg, #214033, #1c352a);
+            box-shadow:
+                14px 14px 35px rgba(0, 0, 0, 0.6),
+                -8px -8px 24px rgba(30, 70, 50, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 80px rgba(60, 180, 120, 0.05);
+            padding: 32px 28px;
+            transform: rotateX(3deg) rotateY(2deg);
+            transition: transform 0.4s ease, box-shadow 0.8s ease, background 0.8s ease;
+            max-height: 520px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .todo-card:hover {
+            transform: rotateX(0deg) rotateY(0deg);
+        }
+
+        body.break-mode .todo-card {
+            background: linear-gradient(145deg, #35301f, #2e281b);
+            box-shadow:
+                14px 14px 35px rgba(0, 0, 0, 0.6),
+                -8px -8px 24px rgba(80, 60, 30, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 80px rgba(200, 160, 80, 0.05);
+        }
+
+        .todo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .todo-title-area {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .todo-date {
+            font-size: 0.9rem;
+            color: #94b8a4;
+            letter-spacing: 0.5px;
+            transition: color 0.5s;
+        }
+
+        body.break-mode .todo-date {
+            color: #c0a878;
+        }
+
+        .todo-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #e0ece4;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(80, 190, 130, 0.2);
+            transition: color 0.5s, text-shadow 0.5s;
+        }
+
+        body.break-mode .todo-header h2 {
+            color: #ece4d8;
+            text-shadow: 0 0 20px rgba(200, 160, 80, 0.2);
+        }
+
+        .todo-count {
+            font-size: 0.8rem;
+            color: #94b8a4;
+            letter-spacing: 1px;
+            transition: color 0.5s;
+        }
+
+        body.break-mode .todo-count {
+            color: #c0a878;
+        }
+
+        .todo-input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            background: linear-gradient(145deg, #142420, #1a2c26);
+            color: #d0e4d6;
+            font-size: 0.85rem;
+            font-family: inherit;
+            box-shadow:
+                inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+                inset -2px -2px 4px rgba(30, 70, 50, 0.04);
+            transition: border-color 0.3s, background 0.5s, box-shadow 0.5s, color 0.5s;
+        }
+
+        .todo-input:focus {
+            outline: none;
+            border-color: rgba(60, 180, 120, 0.3);
+            box-shadow:
+                inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+                inset -2px -2px 4px rgba(30, 70, 50, 0.04),
+                0 0 12px rgba(60, 180, 120, 0.1);
+        }
+
+        .todo-input::placeholder {
+            color: #6a8a78;
+        }
+
+        body.break-mode .todo-input {
+            background: linear-gradient(145deg, #201a10, #281e14);
+            color: #dcd0b8;
+            box-shadow:
+                inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+                inset -2px -2px 4px rgba(80, 60, 30, 0.04);
+        }
+
+        body.break-mode .todo-input:focus {
+            border-color: rgba(200, 160, 80, 0.3);
+            box-shadow:
+                inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+                inset -2px -2px 4px rgba(80, 60, 30, 0.04),
+                0 0 12px rgba(200, 160, 80, 0.1);
+        }
+
+        body.break-mode .todo-input::placeholder {
+            color: #8a7860;
+        }
+
+        .btn-add {
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: linear-gradient(145deg, #243830, #1e3228);
+            color: #a0c4b0;
+            font-size: 1.3rem;
+            box-shadow:
+                4px 4px 12px rgba(0, 0, 0, 0.4),
+                -2px -2px 8px rgba(30, 70, 50, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: transform 0.15s, box-shadow 0.15s, background 0.5s, color 0.5s;
+        }
+
+        .btn-add:hover {
+            transform: scale(1.08);
+            color: #c8e4d4;
+        }
+
+        body.break-mode .btn-add {
+            background: linear-gradient(145deg, #342c1c, #2c2618);
+            color: #c4b088;
+            box-shadow:
+                4px 4px 12px rgba(0, 0, 0, 0.4),
+                -2px -2px 8px rgba(80, 60, 30, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        body.break-mode .btn-add:hover {
+            color: #dcc8a0;
+        }
+
+        .todo-list {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            padding-right: 4px;
+        }
+
+        .todo-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .todo-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            margin-bottom: 8px;
+            transition: background 0.3s, opacity 0.3s;
+        }
+
+        .todo-item:hover {
+            background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        }
+
+        .todo-item.completed {
+            opacity: 0.45;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #6a8a78;
+        }
+
+        body.break-mode .todo-item.completed .todo-text {
+            color: #8a7860;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            background: transparent;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .todo-checkbox.checked {
+            border-color: #2ea868;
+            background: rgba(46, 168, 104, 0.2);
+            color: #2ea868;
+        }
+
+        body.break-mode .todo-checkbox.checked {
+            border-color: #c09040;
+            background: rgba(192, 144, 64, 0.2);
+            color: #c09040;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 0.85rem;
+            color: #d0e4d6;
+            transition: color 0.5s;
+            word-break: break-word;
+        }
+
+        body.break-mode .todo-text {
+            color: #dcd0b8;
+        }
+
+        .btn-delete-todo {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: #6a8a78;
+            font-size: 0.9rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .todo-item:hover .btn-delete-todo {
+            opacity: 1;
+        }
+
+        .btn-delete-todo:hover {
+            color: #e06060;
+        }
+
+        .todo-footer {
+            text-align: center;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .btn-clear-completed {
+            border: none;
+            background: transparent;
+            color: #6a8a78;
+            font-size: 0.7rem;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            font-family: inherit;
+            transition: color 0.3s;
+        }
+
+        .btn-clear-completed:hover {
+            color: #e06060;
+        }
+
+        body.break-mode .btn-clear-completed {
+            color: #8a7860;
+        }
+
+        .todo-empty {
+            text-align: center;
+            color: #6a8a78;
+            font-size: 0.8rem;
+            padding: 24px 0;
+            transition: color 0.5s;
+        }
+
+        body.break-mode .todo-empty {
+            color: #8a7860;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 800px) {
+            .app-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .todo-card {
+                transform: rotateX(3deg) rotateY(-2deg);
+            }
+
+            .todo-card:hover {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="app-container">
     <div class="timer-card" id="timerCard">
         <div class="header">
             <h1>POMODORO</h1>
@@ -440,6 +776,28 @@
         <div class="keyboard-hint">
             <kbd>Space</kbd> 시작/일시정지 &nbsp; <kbd>R</kbd> 초기화 &nbsp; <kbd>S</kbd> 건너뛰기
         </div>
+    </div>
+
+    <div class="todo-card" id="todoCard">
+        <div class="todo-header">
+            <div class="todo-title-area">
+                <span class="todo-date" id="todoDate"></span>
+                <h2>TODO</h2>
+            </div>
+            <span class="todo-count" id="todoCount">0 / 0</span>
+        </div>
+
+        <div class="todo-input-area">
+            <input type="text" id="todoInput" class="todo-input" placeholder="할 일을 입력하세요..." maxlength="100">
+            <button class="btn btn-add" id="btnAddTodo" title="추가 (Enter)">+</button>
+        </div>
+
+        <ul class="todo-list" id="todoList"></ul>
+
+        <div class="todo-footer">
+            <button class="btn-clear-completed" id="btnClearCompleted">완료 항목 삭제</button>
+        </div>
+    </div>
     </div>
 
     <script>
@@ -634,9 +992,116 @@
             }
         });
 
+        // === TODO 기능 ===
+        const todoInput = document.getElementById('todoInput');
+        const todoList = document.getElementById('todoList');
+        const todoCount = document.getElementById('todoCount');
+        const btnAddTodo = document.getElementById('btnAddTodo');
+        const btnClearCompleted = document.getElementById('btnClearCompleted');
+
+        let todos = [];
+
+        function loadTodos() {
+            try {
+                return JSON.parse(localStorage.getItem('pomodoro-todos')) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveTodos() {
+            localStorage.setItem('pomodoro-todos', JSON.stringify(todos));
+        }
+
+        function addTodo(text) {
+            const trimmed = text.trim();
+            if (!trimmed) return;
+            todos.push({ id: Date.now(), text: trimmed, completed: false });
+            saveTodos();
+            renderTodos();
+            todoInput.value = '';
+            todoInput.focus();
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveTodos();
+                renderTodos();
+            }
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            saveTodos();
+            renderTodos();
+        }
+
+        function clearCompletedTodos() {
+            todos = todos.filter(t => !t.completed);
+            saveTodos();
+            renderTodos();
+        }
+
+        function renderTodos() {
+            todoList.innerHTML = '';
+
+            if (todos.length === 0) {
+                const empty = document.createElement('li');
+                empty.className = 'todo-empty';
+                empty.textContent = '할 일을 추가해보세요';
+                todoList.appendChild(empty);
+            } else {
+                todos.forEach(todo => {
+                    const li = document.createElement('li');
+                    li.className = 'todo-item' + (todo.completed ? ' completed' : '');
+
+                    const checkbox = document.createElement('div');
+                    checkbox.className = 'todo-checkbox' + (todo.completed ? ' checked' : '');
+                    checkbox.textContent = '\u2713';
+                    checkbox.addEventListener('click', () => toggleTodo(todo.id));
+
+                    const span = document.createElement('span');
+                    span.className = 'todo-text';
+                    span.textContent = todo.text;
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'btn-delete-todo';
+                    delBtn.textContent = '\u00d7';
+                    delBtn.addEventListener('click', () => deleteTodo(todo.id));
+
+                    li.appendChild(checkbox);
+                    li.appendChild(span);
+                    li.appendChild(delBtn);
+                    todoList.appendChild(li);
+                });
+            }
+
+            const completed = todos.filter(t => t.completed).length;
+            todoCount.textContent = completed + ' / ' + todos.length;
+        }
+
+        btnAddTodo.addEventListener('click', () => addTodo(todoInput.value));
+        todoInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addTodo(todoInput.value);
+        });
+        btnClearCompleted.addEventListener('click', clearCompletedTodos);
+
         // 초기화
         renderDots();
         updateDisplay();
+        todos = loadTodos();
+        renderTodos();
+
+        // 오늘 날짜 표시
+        const now = new Date();
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        document.getElementById('todoDate').textContent =
+            yyyy + '-' + mm + '-' + dd + '(' + days[now.getDay()] + ')';
     </script>
 </body>
 </html>
