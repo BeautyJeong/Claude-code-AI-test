@@ -5,280 +5,436 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>뽀모도로 타이머</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        /* ── 집중 모드: 딥 포레스트 그린 ── */
         body {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', sans-serif;
-            background: #e8e4f0;
-            color: #4a4458;
-            transition: background 0.5s;
+            background: linear-gradient(145deg, #0c1a14, #081210, #0e1a12);
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            perspective: 1000px;
+            transition: background 0.8s ease;
         }
 
+        /* ── 휴식 모드: 따뜻한 앰버 ── */
         body.break-mode {
-            background: #d5ece6;
+            background: linear-gradient(145deg, #1a1508, #14100a, #1a1610);
         }
 
-        .container {
+        .timer-card {
+            width: 380px;
+            border-radius: 28px;
+            background: linear-gradient(145deg, #1c2e24, #162820);
+            box-shadow:
+                14px 14px 35px rgba(0, 0, 0, 0.6),
+                -8px -8px 24px rgba(30, 70, 50, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 80px rgba(60, 180, 120, 0.05);
+            padding: 32px 28px;
+            transform: rotateX(3deg) rotateY(-2deg);
+            transition: transform 0.4s ease, box-shadow 0.8s ease, background 0.8s ease;
+        }
+
+        .timer-card:hover {
+            transform: rotateX(0deg) rotateY(0deg);
+        }
+
+        body.break-mode .timer-card {
+            background: linear-gradient(145deg, #2a2418, #241e14);
+            box-shadow:
+                14px 14px 35px rgba(0, 0, 0, 0.6),
+                -8px -8px 24px rgba(80, 60, 30, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 80px rgba(200, 160, 80, 0.05);
+        }
+
+        /* Header */
+        .header {
             text-align: center;
-            padding: 40px;
+            margin-bottom: 28px;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e0ece4;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(80, 190, 130, 0.2);
+            transition: color 0.5s, text-shadow 0.5s;
+        }
+
+        body.break-mode .header h1 {
+            color: #ece4d8;
+            text-shadow: 0 0 20px rgba(200, 160, 80, 0.2);
         }
 
         .mode-label {
-            font-size: 1rem;
-            color: #8a8298;
-            margin-bottom: 40px;
+            font-size: 0.85rem;
+            color: #94b8a4;
+            margin-top: 8px;
+            letter-spacing: 1px;
             transition: color 0.5s;
         }
 
         body.break-mode .mode-label {
-            color: #5a9e8f;
+            color: #c0a878;
         }
 
-        .timer-ring {
+        /* Timer Display */
+        .timer-display-area {
             position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 40px;
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 28px;
         }
 
-        .timer-ring svg {
+        .timer-display-area svg {
             transform: rotate(-90deg);
-            width: 280px;
-            height: 280px;
+            width: 240px;
+            height: 240px;
+            filter: drop-shadow(0 0 12px rgba(60, 180, 120, 0.2));
+            transition: filter 0.5s;
         }
 
-        .timer-ring .bg-ring {
+        body.break-mode .timer-display-area svg {
+            filter: drop-shadow(0 0 12px rgba(200, 160, 80, 0.2));
+        }
+
+        .bg-ring {
             fill: none;
-            stroke: #d0cad8;
-            stroke-width: 8;
-            transition: stroke 0.5s;
+            stroke: rgba(255, 255, 255, 0.04);
+            stroke-width: 6;
         }
 
-        body.break-mode .timer-ring .bg-ring {
-            stroke: #b8d8d0;
-        }
-
-        .timer-ring .progress-ring {
+        .progress-ring {
             fill: none;
-            stroke: #e8879b;
-            stroke-width: 8;
+            stroke: url(#gradient-work);
+            stroke-width: 6;
             stroke-linecap: round;
-            stroke-dasharray: 814;
+            stroke-dasharray: 660;
             stroke-dashoffset: 0;
             transition: stroke 0.5s;
         }
 
-        body.break-mode .timer-ring .progress-ring {
-            stroke: #7bc4b8;
+        body.break-mode .progress-ring {
+            stroke: url(#gradient-break);
         }
 
-        .timer-display {
+        .timer-time {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 4rem;
-            font-weight: 300;
+            font-size: 3.6rem;
+            font-weight: 200;
+            color: #e0ece4;
             font-variant-numeric: tabular-nums;
             letter-spacing: 4px;
+            text-shadow: 0 0 30px rgba(60, 180, 120, 0.15);
+            transition: text-shadow 0.5s, color 0.5s;
         }
 
+        body.break-mode .timer-time {
+            color: #ece4d8;
+            text-shadow: 0 0 30px rgba(200, 160, 80, 0.15);
+        }
+
+        /* Controls */
         .controls {
             display: flex;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 30px;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 24px;
         }
 
         .btn {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
             border: none;
             cursor: pointer;
-            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
-        }
-
-        .btn:hover {
-            transform: scale(1.1);
+            transition: transform 0.15s, box-shadow 0.15s;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .btn:active {
-            transform: scale(0.95);
+            transform: scale(0.92) !important;
         }
 
-        .btn-start {
-            background: #e8879b;
+        .btn-secondary {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(145deg, #243830, #1e3228);
+            color: #a0c4b0;
+            font-size: 1.1rem;
+            box-shadow:
+                4px 4px 12px rgba(0, 0, 0, 0.4),
+                -2px -2px 8px rgba(30, 70, 50, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: transform 0.15s, box-shadow 0.15s, background 0.5s, color 0.5s;
+        }
+
+        .btn-secondary:hover {
+            transform: scale(1.08);
+            color: #c8e4d4;
+        }
+
+        body.break-mode .btn-secondary {
+            background: linear-gradient(145deg, #342c1c, #2c2618);
+            color: #c4b088;
+            box-shadow:
+                4px 4px 12px rgba(0, 0, 0, 0.4),
+                -2px -2px 8px rgba(80, 60, 30, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        body.break-mode .btn-secondary:hover {
+            color: #dcc8a0;
+        }
+
+        .btn-primary {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2ea868, #268e58);
             color: #fff;
-            box-shadow: 0 4px 15px rgba(232, 135, 155, 0.4);
+            font-size: 1.4rem;
+            box-shadow:
+                4px 4px 16px rgba(40, 150, 90, 0.35),
+                -2px -2px 8px rgba(80, 200, 130, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 30px rgba(60, 180, 120, 0.15);
+            transition: transform 0.15s, box-shadow 0.3s, background 0.5s;
         }
 
-        body.break-mode .btn-start {
-            background: #7bc4b8;
-            box-shadow: 0 4px 15px rgba(123, 196, 184, 0.4);
+        .btn-primary:hover {
+            transform: scale(1.08);
+            box-shadow:
+                4px 4px 20px rgba(40, 150, 90, 0.5),
+                -2px -2px 8px rgba(80, 200, 130, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 40px rgba(60, 180, 120, 0.25);
         }
 
-        .btn-pause {
-            background: #f5a623;
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(245, 166, 35, 0.3);
+        body.break-mode .btn-primary {
+            background: linear-gradient(145deg, #c09040, #a07830);
+            box-shadow:
+                4px 4px 16px rgba(180, 130, 50, 0.35),
+                -2px -2px 8px rgba(220, 180, 100, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 30px rgba(200, 160, 80, 0.15);
         }
 
-        .btn-reset {
-            background: #c8c2d0;
-            color: #6b6278;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        body.break-mode .btn-primary:hover {
+            box-shadow:
+                4px 4px 20px rgba(180, 130, 50, 0.5),
+                -2px -2px 8px rgba(220, 180, 100, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 40px rgba(200, 160, 80, 0.25);
         }
 
-        body.break-mode .btn-reset {
-            background: #b0cfc8;
-            color: #4a7a6e;
-        }
-
-        .btn-skip {
-            background: #c8c2d0;
-            color: #6b6278;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        body.break-mode .btn-skip {
-            background: #b0cfc8;
-            color: #4a7a6e;
-        }
-
+        /* Session Dots */
         .session-info {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 24px;
         }
 
         .session-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: #d0cad8;
-            transition: background 0.3s;
-        }
-
-        body.break-mode .session-dot {
-            background: #b8d8d0;
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.3);
+            transition: background 0.4s, box-shadow 0.4s;
         }
 
         .session-dot.completed {
-            background: #e8879b;
+            background: linear-gradient(145deg, #2ea868, #268e58);
+            box-shadow:
+                0 0 8px rgba(60, 180, 120, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         body.break-mode .session-dot.completed {
-            background: #7bc4b8;
+            background: linear-gradient(145deg, #c09040, #a07830);
+            box-shadow:
+                0 0 8px rgba(200, 160, 80, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
+        /* Settings */
         .settings {
             display: flex;
             justify-content: center;
-            gap: 24px;
-            font-size: 0.85rem;
-            color: #777;
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
-        .settings label {
+        .setting-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 6px;
         }
 
-        .settings input {
-            width: 60px;
-            padding: 6px;
-            border: 1px solid #d0cad8;
-            border-radius: 8px;
-            background: #f0ecf4;
-            color: #4a4458;
+        .setting-item span {
+            font-size: 0.7rem;
+            color: #98b8a6;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: color 0.5s;
+        }
+
+        body.break-mode .setting-item span {
+            color: #baa880;
+        }
+
+        .setting-item input {
+            width: 56px;
+            padding: 8px 4px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            background: linear-gradient(145deg, #142420, #1a2c26);
+            color: #d0e4d6;
             text-align: center;
             font-size: 0.9rem;
+            font-family: inherit;
+            box-shadow:
+                inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+                inset -2px -2px 4px rgba(30, 70, 50, 0.04);
+            transition: border-color 0.3s, background 0.5s, box-shadow 0.5s, color 0.5s;
         }
 
-        body.break-mode .settings input {
-            border-color: #b8d8d0;
-            background: #e4f0ec;
-        }
-
-        .settings input:focus {
+        .setting-item input:focus {
             outline: none;
-            border-color: #e8879b;
+            border-color: rgba(60, 180, 120, 0.3);
+            box-shadow:
+                inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+                inset -2px -2px 4px rgba(30, 70, 50, 0.04),
+                0 0 12px rgba(60, 180, 120, 0.1);
         }
 
-        body.break-mode .settings input:focus {
-            border-color: #7bc4b8;
+        body.break-mode .setting-item input {
+            background: linear-gradient(145deg, #201a10, #281e14);
+            color: #dcd0b8;
+            box-shadow:
+                inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+                inset -2px -2px 4px rgba(80, 60, 30, 0.04);
         }
 
+        body.break-mode .setting-item input:focus {
+            border-color: rgba(200, 160, 80, 0.3);
+            box-shadow:
+                inset 3px 3px 6px rgba(0, 0, 0, 0.35),
+                inset -2px -2px 4px rgba(80, 60, 30, 0.04),
+                0 0 12px rgba(200, 160, 80, 0.1);
+        }
+
+        /* Keyboard Hints */
         .keyboard-hint {
-            margin-top: 24px;
-            font-size: 0.75rem;
-            color: #555;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8caa98;
+            letter-spacing: 0.5px;
+            transition: color 0.5s;
+        }
+
+        body.break-mode .keyboard-hint {
+            color: #b0a080;
         }
 
         .keyboard-hint kbd {
-            background: #d0cad8;
-            padding: 2px 7px;
-            border-radius: 4px;
+            display: inline-block;
+            background: linear-gradient(145deg, #223428, #1c2e22);
+            padding: 2px 8px;
+            border-radius: 5px;
             font-family: inherit;
+            font-size: 0.65rem;
+            color: #98b8a6;
+            box-shadow:
+                2px 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: background 0.5s, color 0.5s;
+        }
+
+        body.break-mode .keyboard-hint kbd {
+            background: linear-gradient(145deg, #302818, #282214);
+            color: #baa880;
+        }
+
+        /* Glow animation when running */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .timer-card.running .progress-ring {
+            filter: drop-shadow(0 0 4px rgba(60, 180, 120, 0.3));
+        }
+
+        body.break-mode .timer-card.running .progress-ring {
+            filter: drop-shadow(0 0 4px rgba(200, 160, 80, 0.3));
+        }
+
+        .timer-card.running .btn-primary {
+            animation: pulse-glow 2s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🍅 뽀모도로 타이머</h1>
-        <div class="mode-label" id="modeLabel">집중 시간</div>
+    <div class="timer-card" id="timerCard">
+        <div class="header">
+            <h1>POMODORO</h1>
+            <div class="mode-label" id="modeLabel">집중 시간</div>
+        </div>
 
-        <div class="timer-ring">
-            <svg viewBox="0 0 280 280">
-                <circle class="bg-ring" cx="140" cy="140" r="130"></circle>
-                <circle class="progress-ring" id="progressRing" cx="140" cy="140" r="130"></circle>
+        <div class="timer-display-area">
+            <svg viewBox="0 0 240 240">
+                <defs>
+                    <linearGradient id="gradient-work" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2ea868" />
+                        <stop offset="100%" stop-color="#40c888" />
+                    </linearGradient>
+                    <linearGradient id="gradient-break" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#c09040" />
+                        <stop offset="100%" stop-color="#d8b060" />
+                    </linearGradient>
+                </defs>
+                <circle class="bg-ring" cx="120" cy="120" r="105"></circle>
+                <circle class="progress-ring" id="progressRing" cx="120" cy="120" r="105"></circle>
             </svg>
-            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div class="timer-time" id="timerDisplay">25:00</div>
         </div>
 
         <div class="controls">
-            <button class="btn btn-reset" id="btnReset" title="초기화 (R)">↺</button>
-            <button class="btn btn-start" id="btnStart" title="시작 (Space)">▶</button>
-            <button class="btn btn-skip" id="btnSkip" title="건너뛰기 (S)">⏭</button>
+            <button class="btn btn-secondary" id="btnReset" title="초기화 (R)">↺</button>
+            <button class="btn btn-primary" id="btnStart" title="시작 (Space)">▶</button>
+            <button class="btn btn-secondary" id="btnSkip" title="건너뛰기 (S)">⏭</button>
         </div>
 
         <div class="session-info" id="sessionDots"></div>
 
         <div class="settings">
-            <label>
-                집중 (분)
+            <div class="setting-item">
+                <span>집중</span>
                 <input type="number" id="workMin" value="25" min="1" max="99">
-            </label>
-            <label>
-                휴식 (분)
+            </div>
+            <div class="setting-item">
+                <span>휴식</span>
                 <input type="number" id="breakMin" value="5" min="1" max="30">
-            </label>
-            <label>
-                긴 휴식 (분)
+            </div>
+            <div class="setting-item">
+                <span>긴 휴식</span>
                 <input type="number" id="longBreakMin" value="15" min="1" max="60">
-            </label>
+            </div>
         </div>
 
         <div class="keyboard-hint">
@@ -287,7 +443,8 @@
     </div>
 
     <script>
-        const CIRCUMFERENCE = 2 * Math.PI * 130; // ≈ 816.8
+        const RADIUS = 105;
+        const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
         const progressRing = document.getElementById('progressRing');
         const timerDisplay = document.getElementById('timerDisplay');
@@ -296,6 +453,7 @@
         const btnReset = document.getElementById('btnReset');
         const btnSkip = document.getElementById('btnSkip');
         const sessionDotsEl = document.getElementById('sessionDots');
+        const timerCard = document.getElementById('timerCard');
         const workMinInput = document.getElementById('workMin');
         const breakMinInput = document.getElementById('breakMin');
         const longBreakMinInput = document.getElementById('longBreakMin');
@@ -335,6 +493,7 @@
             if (remainingSeconds <= 0) {
                 clearInterval(intervalId);
                 isRunning = false;
+                timerCard.classList.remove('running');
                 btnStart.textContent = '▶';
                 onTimerEnd();
                 return;
@@ -346,6 +505,7 @@
         function start() {
             if (isRunning) return;
             isRunning = true;
+            timerCard.classList.add('running');
             btnStart.textContent = '⏸';
             intervalId = setInterval(tick, 1000);
         }
@@ -353,6 +513,7 @@
         function pause() {
             if (!isRunning) return;
             isRunning = false;
+            timerCard.classList.remove('running');
             clearInterval(intervalId);
             btnStart.textContent = '▶';
         }
@@ -379,10 +540,10 @@
             } else {
                 document.body.classList.add('break-mode');
                 if (isLongBreak()) {
-                    modeLabel.textContent = '긴 휴식 시간 ☕';
+                    modeLabel.textContent = '긴 휴식 시간';
                     totalSeconds = getLongBreakSeconds();
                 } else {
-                    modeLabel.textContent = '휴식 시간 🌿';
+                    modeLabel.textContent = '휴식 시간';
                     totalSeconds = getBreakSeconds();
                 }
             }
@@ -401,10 +562,10 @@
                 completedSessions++;
                 renderDots();
                 switchMode(false);
-                alert('휴식 시간입니다! 잠시 쉬어가세요 🌿');
+                alert('휴식 시간입니다! 잠시 쉬어가세요.');
             } else {
                 switchMode(true);
-                alert('집중 시간입니다! 다시 시작해볼까요? 🍅');
+                alert('집중 시간입니다! 다시 시작해볼까요?');
             }
             start();
         }
@@ -447,9 +608,7 @@
                     osc.start(ctx.currentTime + i * 0.15);
                     osc.stop(ctx.currentTime + i * 0.15 + 0.4);
                 });
-            } catch (e) {
-                // 소리 재생 실패 시 무시
-            }
+            } catch (e) {}
         }
 
         // 이벤트 리스너
