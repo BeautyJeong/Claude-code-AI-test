@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>뽀모도로 타이머</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            background: #e8e4f0;
+            color: #4a4458;
+            transition: background 0.5s;
+        }
+
+        body.break-mode {
+            background: #d5ece6;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .mode-label {
+            font-size: 1rem;
+            color: #8a8298;
+            margin-bottom: 40px;
+            transition: color 0.5s;
+        }
+
+        body.break-mode .mode-label {
+            color: #5a9e8f;
+        }
+
+        .timer-ring {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 40px;
+        }
+
+        .timer-ring svg {
+            transform: rotate(-90deg);
+            width: 280px;
+            height: 280px;
+        }
+
+        .timer-ring .bg-ring {
+            fill: none;
+            stroke: #d0cad8;
+            stroke-width: 8;
+            transition: stroke 0.5s;
+        }
+
+        body.break-mode .timer-ring .bg-ring {
+            stroke: #b8d8d0;
+        }
+
+        .timer-ring .progress-ring {
+            fill: none;
+            stroke: #e8879b;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 814;
+            stroke-dashoffset: 0;
+            transition: stroke 0.5s;
+        }
+
+        body.break-mode .timer-ring .progress-ring {
+            stroke: #7bc4b8;
+        }
+
+        .timer-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: 300;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 4px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-start {
+            background: #e8879b;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(232, 135, 155, 0.4);
+        }
+
+        body.break-mode .btn-start {
+            background: #7bc4b8;
+            box-shadow: 0 4px 15px rgba(123, 196, 184, 0.4);
+        }
+
+        .btn-pause {
+            background: #f5a623;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(245, 166, 35, 0.3);
+        }
+
+        .btn-reset {
+            background: #c8c2d0;
+            color: #6b6278;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body.break-mode .btn-reset {
+            background: #b0cfc8;
+            color: #4a7a6e;
+        }
+
+        .btn-skip {
+            background: #c8c2d0;
+            color: #6b6278;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body.break-mode .btn-skip {
+            background: #b0cfc8;
+            color: #4a7a6e;
+        }
+
+        .session-info {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .session-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d0cad8;
+            transition: background 0.3s;
+        }
+
+        body.break-mode .session-dot {
+            background: #b8d8d0;
+        }
+
+        .session-dot.completed {
+            background: #e8879b;
+        }
+
+        body.break-mode .session-dot.completed {
+            background: #7bc4b8;
+        }
+
+        .settings {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .settings label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .settings input {
+            width: 60px;
+            padding: 6px;
+            border: 1px solid #d0cad8;
+            border-radius: 8px;
+            background: #f0ecf4;
+            color: #4a4458;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        body.break-mode .settings input {
+            border-color: #b8d8d0;
+            background: #e4f0ec;
+        }
+
+        .settings input:focus {
+            outline: none;
+            border-color: #e8879b;
+        }
+
+        body.break-mode .settings input:focus {
+            border-color: #7bc4b8;
+        }
+
+        .keyboard-hint {
+            margin-top: 24px;
+            font-size: 0.75rem;
+            color: #555;
+        }
+
+        .keyboard-hint kbd {
+            background: #d0cad8;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍅 뽀모도로 타이머</h1>
+        <div class="mode-label" id="modeLabel">집중 시간</div>
+
+        <div class="timer-ring">
+            <svg viewBox="0 0 280 280">
+                <circle class="bg-ring" cx="140" cy="140" r="130"></circle>
+                <circle class="progress-ring" id="progressRing" cx="140" cy="140" r="130"></circle>
+            </svg>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-reset" id="btnReset" title="초기화 (R)">↺</button>
+            <button class="btn btn-start" id="btnStart" title="시작 (Space)">▶</button>
+            <button class="btn btn-skip" id="btnSkip" title="건너뛰기 (S)">⏭</button>
+        </div>
+
+        <div class="session-info" id="sessionDots"></div>
+
+        <div class="settings">
+            <label>
+                집중 (분)
+                <input type="number" id="workMin" value="25" min="1" max="99">
+            </label>
+            <label>
+                휴식 (분)
+                <input type="number" id="breakMin" value="5" min="1" max="30">
+            </label>
+            <label>
+                긴 휴식 (분)
+                <input type="number" id="longBreakMin" value="15" min="1" max="60">
+            </label>
+        </div>
+
+        <div class="keyboard-hint">
+            <kbd>Space</kbd> 시작/일시정지 &nbsp; <kbd>R</kbd> 초기화 &nbsp; <kbd>S</kbd> 건너뛰기
+        </div>
+    </div>
+
+    <script>
+        const CIRCUMFERENCE = 2 * Math.PI * 130; // ≈ 816.8
+
+        const progressRing = document.getElementById('progressRing');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const modeLabel = document.getElementById('modeLabel');
+        const btnStart = document.getElementById('btnStart');
+        const btnReset = document.getElementById('btnReset');
+        const btnSkip = document.getElementById('btnSkip');
+        const sessionDotsEl = document.getElementById('sessionDots');
+        const workMinInput = document.getElementById('workMin');
+        const breakMinInput = document.getElementById('breakMin');
+        const longBreakMinInput = document.getElementById('longBreakMin');
+
+        progressRing.style.strokeDasharray = CIRCUMFERENCE;
+
+        let isRunning = false;
+        let isWorkMode = true;
+        let totalSeconds = 25 * 60;
+        let remainingSeconds = totalSeconds;
+        let intervalId = null;
+        let completedSessions = 0;
+        const TOTAL_SESSIONS = 4;
+
+        function renderDots() {
+            sessionDotsEl.innerHTML = '';
+            for (let i = 0; i < TOTAL_SESSIONS; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'session-dot' + (i < completedSessions ? ' completed' : '');
+                sessionDotsEl.appendChild(dot);
+            }
+        }
+
+        function updateDisplay() {
+            const m = Math.floor(remainingSeconds / 60);
+            const s = remainingSeconds % 60;
+            timerDisplay.textContent =
+                String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+
+            const progress = 1 - remainingSeconds / totalSeconds;
+            progressRing.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+
+            document.title = timerDisplay.textContent + ' - 뽀모도로';
+        }
+
+        function tick() {
+            if (remainingSeconds <= 0) {
+                clearInterval(intervalId);
+                isRunning = false;
+                btnStart.textContent = '▶';
+                onTimerEnd();
+                return;
+            }
+            remainingSeconds--;
+            updateDisplay();
+        }
+
+        function start() {
+            if (isRunning) return;
+            isRunning = true;
+            btnStart.textContent = '⏸';
+            intervalId = setInterval(tick, 1000);
+        }
+
+        function pause() {
+            if (!isRunning) return;
+            isRunning = false;
+            clearInterval(intervalId);
+            btnStart.textContent = '▶';
+        }
+
+        function resetTimer() {
+            pause();
+            if (isWorkMode) {
+                totalSeconds = getWorkSeconds();
+            } else {
+                totalSeconds = isLongBreak() ? getLongBreakSeconds() : getBreakSeconds();
+            }
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+        }
+
+        function switchMode(toWork) {
+            pause();
+            isWorkMode = toWork;
+
+            if (isWorkMode) {
+                document.body.classList.remove('break-mode');
+                modeLabel.textContent = '집중 시간';
+                totalSeconds = getWorkSeconds();
+            } else {
+                document.body.classList.add('break-mode');
+                if (isLongBreak()) {
+                    modeLabel.textContent = '긴 휴식 시간 ☕';
+                    totalSeconds = getLongBreakSeconds();
+                } else {
+                    modeLabel.textContent = '휴식 시간 🌿';
+                    totalSeconds = getBreakSeconds();
+                }
+            }
+
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+        }
+
+        function isLongBreak() {
+            return !isWorkMode && completedSessions > 0 && completedSessions % TOTAL_SESSIONS === 0;
+        }
+
+        function onTimerEnd() {
+            playSound();
+            if (isWorkMode) {
+                completedSessions++;
+                renderDots();
+                switchMode(false);
+                alert('휴식 시간입니다! 잠시 쉬어가세요 🌿');
+            } else {
+                switchMode(true);
+                alert('집중 시간입니다! 다시 시작해볼까요? 🍅');
+            }
+            start();
+        }
+
+        function skip() {
+            if (isWorkMode) {
+                completedSessions++;
+                renderDots();
+                switchMode(false);
+            } else {
+                switchMode(true);
+            }
+        }
+
+        function getWorkSeconds() {
+            return (parseInt(workMinInput.value) || 25) * 60;
+        }
+
+        function getBreakSeconds() {
+            return (parseInt(breakMinInput.value) || 5) * 60;
+        }
+
+        function getLongBreakSeconds() {
+            return (parseInt(longBreakMinInput.value) || 15) * 60;
+        }
+
+        function playSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [523.25, 659.25, 783.99];
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.15);
+                    osc.stop(ctx.currentTime + i * 0.15 + 0.4);
+                });
+            } catch (e) {
+                // 소리 재생 실패 시 무시
+            }
+        }
+
+        // 이벤트 리스너
+        btnStart.addEventListener('click', () => isRunning ? pause() : start());
+        btnReset.addEventListener('click', resetTimer);
+        btnSkip.addEventListener('click', skip);
+
+        [workMinInput, breakMinInput, longBreakMinInput].forEach(input => {
+            input.addEventListener('change', () => {
+                if (!isRunning) resetTimer();
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT') return;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                isRunning ? pause() : start();
+            } else if (e.code === 'KeyR') {
+                resetTimer();
+            } else if (e.code === 'KeyS') {
+                skip();
+            }
+        });
+
+        // 초기화
+        renderDots();
+        updateDisplay();
+    </script>
+</body>
+</html>
